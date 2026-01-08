@@ -10,3 +10,5 @@ browser
 .env
 playwright-log.txt
 results/
+*.pyc\
+/resource/Library/__pycache__/*
