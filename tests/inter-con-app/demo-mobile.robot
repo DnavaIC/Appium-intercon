@@ -53,6 +53,23 @@ Verify No picture error message is displayed in Weapon Inventory
     AND Tap Submit button
     THEN Validate error message when subitting without picture 
 
+
+Verify error message is displayed in Incidents
+    [Documentation]    Submit weapon form without picture
+    ...    Pre-conditions: No preconditions
+    [Tags]    demo    mobile
+    GIVEN Android Inter-con security Application KIOSK-NA
+    AND Login to Inter-Con App
+    WHEN Home menu is displayed
+    AND Close Pending Shifts Popup If Present
+    AND Navigate to Tools Section
+    AND Navigate to Shift tools section
+    AND Click Incidents
+    AND Tap Report incident button
+    # AND Fill all Weapons inputs
+    AND Tap Submit button
+    # THEN Validate error message when subitting without picture     
+
 Check user with no equipment assigned
     [Documentation]    Validate user with empty items assigned
     ...    Pre-conditions: User phone number with no equipment assigned

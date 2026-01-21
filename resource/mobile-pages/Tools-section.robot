@@ -12,10 +12,13 @@ ${EXTERIOR_APPEARANCE}    accessibility_id=Exterior Appearance
 ${INTERIOR_APPEARANCE}    accessibility_id=Interior Appearance
 ${ADDITIONAL_NOTES}       xpath=(//android.widget.EditText)[1]
 ${WEAPONS_INVENTORY}      //*[contains(@content-desc, 'Weapons Inventory')]
+${INCIDENTS}              //*[contains(@content-desc, 'Incidents')]
 ${SERIAL_NUMBER_INPUT}    android=new UiSelector().className("android.widget.EditText").instance(0)
 ${DESCRIPTION_INPUT}      android=new UiSelector().className("android.widget.EditText").instance(1)
-${SUBMIT_BTN}             accessibility_id=SUBMIT
 ${NO_PICTURE_ERROR}       xpath=//*[contains(@text,'Please upload') or contains(@content-desc,'Please upload')]
+${REPORT_INCIDENT_BTN}    xpath=//*[@content-desc='REPORT INCIDENT' or @text='REPORT INCIDENT']
+${SUBMIT_BTN}             xpath=//*[@content-desc='SUBMIT' or @text='SUBMIT' or contains(@content-desc,'SUBMIT') or contains(@text,'SUBMIT')]
+
 
 *** Keywords ***
 
@@ -34,6 +37,11 @@ Click Weapon Inventory
     Wait Until Element Is Visible    ${WEAPONS_INVENTORY}   timeout=10s
     Click Element    ${WEAPONS_INVENTORY}
     Capture Page Screenshot     
+
+Click Incidents
+    Wait Until Element Is Visible    ${INCIDENTS}   timeout=10s
+    Click Element    ${INCIDENTS}
+    Capture Page Screenshot       
 
 
 Fill all Weapons inputs
@@ -78,11 +86,30 @@ Fill all Vehicle inputs
 
     Capture Page Screenshot
 
+Tap Report incident button
+    Wait Until Element Is Visible    ${REPORT_INCIDENT_BTN}    
+    Click Element    ${REPORT_INCIDENT_BTN}
+    Capture Page Screenshot
+
+
 Tap Submit button
-    Click Element    accessibility_id=SUBMIT
-    Sleep    1s
+    [Documentation]    Scrolls down until SUBMIT is visible and taps it
+
+    FOR    ${i}    IN RANGE    0    8
+        ${found}=    Run Keyword And Return Status    Page Should Contain Element    ${SUBMIT_BTN}
+        IF    ${found}
+            Wait Until Element Is Visible    ${SUBMIT_BTN}    timeout=5s
+            Click Element    ${SUBMIT_BTN}
+            Capture Page Screenshot
+            Return From Keyword
+        END
+        Swipe    540    2000    540    700    800
+        Sleep    1s
+    END
+
     Log Source
     Capture Page Screenshot
+    Fail    SUBMIT button not found after scrolling
 
 
 Validate error message when subitting without picture
