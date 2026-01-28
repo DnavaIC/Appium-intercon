@@ -109,6 +109,8 @@ At least one emulator (Pixel recommended)
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$ANDROID_HOME/platform-tools:$PATH
 export JAVA_HOME=$(/usr/libexec/java_home)
+export PHONE_NUMBER=6504557451
+export WRONG_PHONE_NUMBER=0000000000
 
 ## Reload:
 
@@ -137,7 +139,8 @@ emulator-5554    device
 
 ## Run entire mobile suite:
 
-poetry run robot --outputdir ./output/reports tests/inter-con-app/demo-mobile.robot
+
+
 
 ## Run single test case:
 

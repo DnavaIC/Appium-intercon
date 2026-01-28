@@ -66,9 +66,8 @@ Verify error message is displayed in Incidents
     AND Navigate to Shift tools section
     AND Click Incidents
     AND Tap Report incident button
-    # AND Fill all Weapons inputs
     AND Tap Submit button
-    # THEN Validate error message when subitting without picture     
+    THEN Validate error message when Failed Creating Incident message     
 
 Check user with no equipment assigned
     [Documentation]    Validate user with empty items assigned
@@ -102,3 +101,35 @@ Verify remaining time in Early Clock-Out
     AND Verify CLOCK_IN status
     AND Get remaining time
     THEN Verify early Clock-Out time
+
+Verify Cancel Button in Open Seats is not confirmed
+    [Documentation]    Cancel button should not confirm the seat
+    ...    Pre-conditions: No preconditions
+    [Tags]    demo    mobile
+    GIVEN Android Inter-con security Application KIOSK-NA
+    AND Login to Inter-Con App
+    WHEN Home menu is displayed
+    AND Close Pending Shifts Popup If Present
+    AND Navigate to Tools Section
+    AND Navigate to Officer section
+    AND Click Open Seats
+    AND Open Seats page is displayed
+    AND Tap first Apply button in Open Seats
+    AND Cancel Confirm Open Seat modal
+    THEN Verify returned to Open Seats list
+
+Verify Submit Button in Open Seats confirmed
+    [Documentation]    Cancel button should not confirm the seat
+    ...    Pre-conditions: No preconditions
+    [Tags]    demo    mobile
+    GIVEN Android Inter-con security Application KIOSK-NA
+    AND Login to Inter-Con App
+    WHEN Home menu is displayed
+    AND Close Pending Shifts Popup If Present
+    AND Navigate to Tools Section
+    AND Navigate to Officer section
+    AND Click Open Seats
+    AND Open Seats page is displayed
+    AND Tap first Apply button in Open Seats
+    AND Submit Confirm Open Seat modal
+    # THEN Verify returned to Open Seats list    
