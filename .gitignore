@@ -10,3 +10,7 @@ browser
 .env
 playwright-log.txt
 results/
+# Python
+__pycache__/
+*.pyc
+.python-version

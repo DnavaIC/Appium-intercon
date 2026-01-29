@@ -9,6 +9,7 @@ Please go to [IC security - mobile automation wiki](https://github.com/DnavaIC/S
 
 ## Quick run setup (Advanced)
 
+
 ### 1. with Node and Python pre-installed
 
 
@@ -60,6 +61,98 @@ npm run demo-web
 ```
 npm run demo-mobile
 ```
+#### Intalation on Mac
+
+### Tech Stack
+
+Robot Framework
+Appium
+Python 3.11+
+Poetry (dependency management)
+Android Emulator or Physical Device
+UiAutomator2
+Node.js
+
+### System requirements
+
+## Make sure you have the following installed:
+
+brew install node
+brew install python@3.11
+brew install openjdk
+brew install android-platform-tools
+
+## Verify:
+
+node -v
+python3 --version
+java -version
+adb version
+
+## Install Appium globally
+npm install -g appium
+appium driver install uiautomator2
+
+## Verify:
+
+appium -v
+appium driver list
+
+## Install Android Studio and ensure:
+
+Android SDK
+Platform Tools
+At least one emulator (Pixel recommended)
+
+## Environment variables (add to ~/.zprofile or ~/.zshrc):
+
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+export JAVA_HOME=$(/usr/libexec/java_home)
+export PHONE_NUMBER=6504557451
+export WRONG_PHONE_NUMBER=0000000000
+
+## Reload:
+
+source ~/.zprofile
+
+## Clone repository
+git clone https://github.com/DnavaIC/STD-Automation-testing-icsecurity.git
+cd STD-Automation-testing-icsecurity
+
+## Install Python dependencies with Poetry (recommended)
+pip install poetry
+poetry install
+poetry shell
+
+## Start Appium server
+
+appium
+
+## Start Android emulator or connect device
+
+adb devices
+
+## You should see something like:
+
+emulator-5554    device
+
+## Run entire mobile suite:
+
+
+
+
+## Run single test case:
+
+poetry run robot --outputdir ./output/reports --test "Input Wrong Phone Number" tests/inter-con-app/demo-mobile.robot
+
+poetry run robot --outputdir ./output/reports --test "Verify No picture error message is displayed in Vehicle Inspection" tests/inter-con-app/demo-mobile.robot
+
+poetry run robot --outputdir ./output/reports --test "Verify No picture error message is displayed in Weapon Inventory" tests/inter-con-app/demo-mobile.robot
+
+poetry run robot --outputdir ./output/reports --test "Check user with no equipment assigned" tests/inter-con-app/demo-mobile.robot
+
+poetry run robot --outputdir ./output/reports --test "Verify remaining time in Early Clock-Out" tests/inter-con-app/demo-mobile.robot
 
 
 ## Contributing
@@ -67,5 +160,7 @@ npm run demo-mobile
 Please note that all the work here is currently under development.
 You are welcome to contribute to the project; just send your PR.
 
----
-Author and maintainer: Diego E. Nava, dnava@icsecurity.com
+- Diego E. Nava – Project author & maintainer, dnava@icsecurity.com  
+- Sergio Ávila Espinosa – Mobile automation improvements, savila@icsecurity.com 
+
+

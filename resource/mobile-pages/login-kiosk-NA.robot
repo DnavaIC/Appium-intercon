@@ -2,52 +2,96 @@
 Documentation  steps for login page
 Library  AppiumLibrary  timeout=10
 Resource    ../utils/appiumDriver.robot
+Resource    ../mobile-pages/home-menu.robot
 
 *** Variables ***
-${WHILE_USING_APP}       //*[contains(@resource-id, 'permission_allow_foreground_only_button')]
-${ALLOW_ALERT}           //*[contains(@resource-id, 'permission_allow_button')]
-${CONFIGURE_LOCATION}    //*[contains(@resource-id, 'btn_positive_action')]
-${ALLOW_ALL_TIME}        //*[contains(@resource-id, 'allow_always_radio_button')]
-${ANDROID_BACK}          //*[contains(@class, 'ImageButton')]
-${PHONE_INPUT}           //*[contains(@class, 'EditText')]
-${CONTINUE_LOGIN}        accessibility_id=CONTINUE
-${LABEL_HOME}            accessibility_id=Home
-${CLOSE_WINDOW}          //android.view.View[@content-desc="CONFIRM SHIFT"]/android.widget.Button
-${INVALID_NUMBER}        //android.view.View[@content-desc="Invalid phone number"]
+${WHILE_USING_APP}         //*[contains(@resource-id, 'permission_allow_foreground_only_button')]
+${ALLOW_ALERT}             //*[contains(@resource-id, 'permission_allow_button')]
+${CONFIGURE_LOCATION}      //*[contains(@resource-id, 'btn_positive_action')]
+${ALLOW_ALL_TIME}          //*[contains(@resource-id, 'allow_always_radio_button')]
+${ANDROID_BACK}            //*[contains(@class, 'ImageButton')]
+${PHONE_INPUT_EDITTEXT}    xpath=(//android.widget.EditText | //android.widget.AutoCompleteTextView)[1]
+${PHONE_INPUT_TEXT}        xpath=//*[@text='(987) 654-3111']
+${PHONE_INPUT_CLICKABLE}   xpath=//*[@focusable='true' and (@clickable='true' or @long-clickable='true')][1]
+${NOTIF_ALLOW_TEXT}        xpath=//*[@text='Allow' or @text='ALLOW']
+${NOTIF_DENY_TEXT}         xpath=//*[@text="Don't allow" or @text="DON'T ALLOW" or @text="Don’t allow"]
+${NOTIF_ALLOW_ID}          xpath=//*[contains(@resource-id,'permission_allow_button')]
+${NOTIF_DENY_ID}           xpath=//*[contains(@resource-id,'permission_deny_button')]
+${CONTINUE_LOGIN}          xpath=//*[@content-desc='CONTINUE' or @text='CONTINUE' or @text='Continue' or @content-desc='Continue']
+${LABEL_HOME}              accessibility_id=Home
+${CLOSE_WINDOW}            //android.view.View[@content-desc="CONFIRM SHIFT"]/android.widget.Button
+${INVALID_NUMBER}          //android.view.View[@content-desc="Invalid phone number"]
+${CALLS_ALLOW_TEXT}        xpath=//*[@text='Allow' or @content-desc='Allow']
+${CALLS_DENY_TEXT}        xpath=//*[@text="Don't allow" or @content-desc="Don't allow"]
 
 *** Keywords ***
 Accept android location permission
-  Wait Until Page Contains Element  ${WHILE_USING_APP} 
-  Capture Page Screenshot
-  Click Element  ${WHILE_USING_APP}
+  ${present}=    Run Keyword And Return Status    Page Should Contain Element    ${WHILE_USING_APP}
+  Run Keyword If    ${present}    Click Element  ${WHILE_USING_APP}
 
-Accept android activity permission  
-  Wait Until Page Contains Element    ${ALLOW_ALERT}
-  Capture Page Screenshot
-  Click Element  ${ALLOW_ALERT}
+Accept android activity permission
+  ${present}=    Run Keyword And Return Status    Page Should Contain Element    ${ALLOW_ALERT}
+  Run Keyword If    ${present}    Click Element  ${ALLOW_ALERT}
+
 
 Configure all time location
-  Wait Until Element Is Visible    ${CONFIGURE_LOCATION}
+  ${present}=    Run Keyword And Return Status    Page Should Contain Element    ${CONFIGURE_LOCATION}
+  Run Keyword If    not ${present}    Return From Keyword
+  Wait Until Element Is Visible    ${CONFIGURE_LOCATION}    timeout=5s
   Capture Page Screenshot
   Click Element  ${CONFIGURE_LOCATION}
-  Wait Until Element Is Visible    ${ALLOW_ALL_TIME}    timeout=5s
-  Click Element  ${ALLOW_ALL_TIME}
+  ${all_time_present}=    Run Keyword And Return Status    Page Should Contain Element    ${ALLOW_ALL_TIME}
+  Run Keyword If    ${all_time_present}    Click Element    ${ALLOW_ALL_TIME}
+  Run Keyword And Ignore Error    Click Element  ${ANDROID_BACK}
   Capture Page Screenshot
-  Click Element  ${ANDROID_BACK} 
-  Capture Page Screenshot
+
+Get Phone Input Locator
+  ${has_edit}=    Run Keyword And Return Status    Page Should Contain Element    ${PHONE_INPUT_EDITTEXT}
+  Run Keyword If    ${has_edit}    Return From Keyword    ${PHONE_INPUT_EDITTEXT}
+  ${has_text}=    Run Keyword And Return Status    Page Should Contain Element    ${PHONE_INPUT_TEXT}
+  Run Keyword If    ${has_text}    Return From Keyword    ${PHONE_INPUT_TEXT}
+  Return From Keyword    ${PHONE_INPUT_CLICKABLE}
+
+Accept notifications permission if present
+  Run Keyword And Ignore Error    Wait Until Page Contains Element    ${NOTIF_ALLOW_TEXT}    3s
+  Run Keyword And Ignore Error    Click Element    ${NOTIF_ALLOW_TEXT}
+  Run Keyword And Ignore Error    Wait Until Page Contains Element    ${NOTIF_ALLOW_ID}      3s
+  Run Keyword And Ignore Error    Click Element    ${NOTIF_ALLOW_ID}
 
 Input VALID phone number
-  Wait Until Element Is Visible    ${PHONE_INPUT}
-  Input Text    ${PHONE_INPUT}    %{PHONE_NUMBER}
+  [Documentation]    Input valid phone number from environment variables
+  Accept notifications permission if present
+  ${phone}=    Get Phone Input Locator
+  Wait Until Element Is Visible    ${phone}    timeout=30s
+  Click Element    ${phone}
+  Run Keyword And Ignore Error    Clear Text    ${phone}
+  Input Text       ${phone}    %{PHONE_NUMBER}
+  Run Keyword And Ignore Error    Hide Keyboard
   Capture Page Screenshot
   Click Element    ${CONTINUE_LOGIN}
-  Wait Until Element Is Visible    ${ALLOW_ALERT}    timeout=30s
-  Click Element    ${ALLOW_ALERT}
+  # this permission sometimes shows it is optional
+  Run Keyword And Ignore Error    Wait Until Element Is Visible    ${ALLOW_ALERT}    timeout=3s
+  Run Keyword And Ignore Error    Click Element    ${ALLOW_ALERT}
+
+
+Open App And Dismiss Permissions
+  Android Inter-con security Application KIOSK-NA
+  Accept android location permission
+  Accept android activity permission
+  Accept notifications permission if present
+  Configure all time location
+
 
 Input WRONG phone number
-  [Documentation]    Input wrong phone number from envrionment variables
-  Wait Until Element Is Visible    ${PHONE_INPUT}
-  Input Text    ${PHONE_INPUT}    %{WRONG_PHONE_NUMBER}
+  [Documentation]    Input wrong phone number from environment variables
+  Accept notifications permission if present
+
+  ${phone}=    Get Phone Input Locator
+  Wait Until Element Is Visible    ${phone}    timeout=30s
+  Click Element    ${phone}
+  Run Keyword And Ignore Error    Clear Text    ${phone}
+  Input Text       ${phone}    %{WRONG_PHONE_NUMBER}
+  Run Keyword And Ignore Error    Hide Keyboard
   Capture Page Screenshot
 
 Tap continue login button
@@ -55,8 +99,8 @@ Tap continue login button
   Click Element    ${CONTINUE_LOGIN}
 
 Allow calls alert
-  Wait Until Element Is Visible    ${ALLOW_ALERT}    timeout=30s
-  Click Element    ${ALLOW_ALERT}
+  Run Keyword And Ignore Error    Wait Until Element Is Visible    ${ALLOW_ALERT}    timeout=3s
+  Run Keyword And Ignore Error    Click Element    ${ALLOW_ALERT}
 
 Verify error message when wrong number is input
   [Documentation]    Verify error message when wrong phone number is input
@@ -72,8 +116,10 @@ Close confirm shift notification
 Login to Inter-Con App
     Accept android location permission
     Accept android activity permission
+    Accept notifications permission if present
     Configure all time location
     Input VALID phone number
     Tap continue login button
     Allow calls alert
+    Close Pending Shifts Modal If Present
     Close confirm shift notification
